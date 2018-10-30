@@ -1,14 +1,14 @@
 {
-  "name": "seneca_client_for_ng2",
-  "version": "1.0.5",
-  "description": "a thin client to invoke seneca microservice",
+  "name": "http-micro-service-client",
+  "version": "0.0.0",
+  "description": "a thin client to invoke microservice",
   "main": "./index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cao5zy/seneca_client_for_ng2.git"
+    "url": "git+https://github.com/cao5zy/http-micro-service-client"
   },
   "types": "./dist/index.d.ts",
   "typings": "./dist/index.d.ts",
@@ -22,9 +22,9 @@
   "author": "zongying.cao@hpe.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/cao5zy/seneca_client_for_ng2/issues"
+    "url": "https://github.com/cao5zy/http-micro-service-client/issues"
   },
-  "homepage": "https://github.com/cao5zy/seneca_client_for_ng2#readme",
+  "homepage": "https://github.com/cao5zy/http-micro-service-client#readme",
   "engines": {
     "node": ">=6.10.3"
   },
