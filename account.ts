@@ -1,4 +1,7 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable, Inject, EventEmitter } from '@angular/core';
+import { MICRO_API_CONF } from './micro_api_conf';
+import { MicroserviceAPIConfig } from './microservice_api_config';
+import { Http } from '@angular/http';
 
 @Injectable()
 export class AccountService {
@@ -6,8 +9,13 @@ export class AccountService {
   private userName: string = "";
   private token: string = "";
   statusChanged = new EventEmitter<string>(); //params account_changed
+  private _baseUrl: string = "";
   
-  constructor(){}
+  constructor(@Inject(MICRO_API_CONF) apiConfig: MicroserviceAPIConfig,
+    private _http: Http
+  ){
+    this._baseUrl = apiConfig.baseUrl;
+  }
 
   reset() {
     this.set();
@@ -31,7 +39,17 @@ export class AccountService {
     return this.token && this.token.length != 0;
   }
 
-  signin(name: string, pwd: string) : Promise<string> {
-    return new Promise<string>((solve, reject)=>{});  
+  signup(name: string, pwd: string) : Promise<string> {
+    return new Promise<string>((solve, reject)=>{
+       this._http.post(this._baseUrl + '/signup', {name: name, pwd: pwd})
+	 .subscribe(res=>{
+	   ((data)=>{
+	     if (data == "hello")
+	     {
+	     }
+	   })(res["_body"]);
+
+	 });
+     });
   }
 }
