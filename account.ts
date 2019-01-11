@@ -40,15 +40,17 @@ export class AccountService {
   }
 
   signup(name: string, pwd: string) : Promise<string> {
-    return new Promise<string>((solve, reject)=>{
+    return new Promise<string>((resolve, reject)=>{
        this._http.post(this._baseUrl + '/signup', {name: name, pwd: pwd})
 	 .subscribe(res=>{
-	   ((data)=>{
-	     if (data == "hello")
-	     {
-	     }
-	   })(res["_body"]);
-
+	   if (res.status == 201)
+	   {
+	     resolve(res['_body'] as string);
+	   }
+	   else
+	   {
+	     reject('error happened');
+	   }
 	 });
      });
   }
