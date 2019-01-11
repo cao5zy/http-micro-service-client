@@ -31,4 +31,7 @@ export class AccountService {
     return this.token && this.token.length != 0;
   }
 
+  signin(name: string, pwd: string) : Promise<string> {
+    return new Promise<string>((solve, reject)=>{});  
+  }
 }

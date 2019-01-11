@@ -4,12 +4,8 @@ import { Http, Headers } from '@angular/http';
 import { Injectable, InjectionToken, Inject } from '@angular/core';
 import * as _ from 'underscore';
 import { AccountService } from './account';
-
-export interface MicroServiceAPIConfig {
-    baseUrl: string
-}
-
-export const MICRO_API_CONF = new InjectionToken<MicroServiceAPIConfig>("microservice.api.config");
+import { MICRO_API_CONF } from './micro_api_conf';
+import { MicroserviceAPIConfig } from './microservice_api_config';
 
 
 export abstract class Service{
@@ -21,7 +17,7 @@ export class MicroserviceClient extends Service{
     private buildUrl: (string)=>string;
     constructor(private http: Http,
       private account: AccountService,
-      @Inject(MICRO_API_CONF) apiConfig: MicroServiceAPIConfig){
+      @Inject(MICRO_API_CONF) apiConfig: MicroserviceAPIConfig){
       super();
       this.buildUrl = (microserviceName:string):string=>{
         return `${apiConfig.baseUrl}/_api/${microserviceName}`;
@@ -138,3 +134,5 @@ export function useService(service: Service, microserviceName: string): (string)
 }
 
 export { AccountService } from './account';
+export *  from './microservice_api_config';
+export * from './micro_api_conf';
