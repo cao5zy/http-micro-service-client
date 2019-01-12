@@ -54,4 +54,21 @@ export class AccountService {
 	 });
      });
   }
+
+  signin(name: string, pwd: string): Promise<string> {
+    return new Promise<string>((resolve, reject)=>{
+      this._http.post(this._baseUrl + '/signin', {name: name, pwd: pwd})
+      .subscribe(res=>{
+        if (res.status == 200 )
+	{
+	  resolve(res['_body'] as string);
+	}
+	else
+	{
+	  reject('authentication failed');
+	}
+	
+      });
+    });
+  }
 }
