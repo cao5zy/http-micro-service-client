@@ -29,7 +29,7 @@ export class AccountService {
     return this.token;
   }
 
-  set(userName: string = "", token: string = ""){
+  private set(userName: string = "", token: string = ""){
     this.userName = token && token.length != 0 ? userName : "";
     this.token = typeof token == 'undefined' ? "": token;
     this.statusChanged.next("account_changed");
@@ -61,7 +61,8 @@ export class AccountService {
       .subscribe(res=>{
         if (res.status == 200 )
 	{
-	  resolve(res['_body'] as string);
+	  this.set(name, res['_body'] as string);
+	  resolve("");
 	}
 	else
 	{
