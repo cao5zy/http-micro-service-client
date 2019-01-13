@@ -59,7 +59,7 @@ export class AccountService {
     return new Promise<string>((resolve, reject)=>{
       this._http.post(this._baseUrl + '/signin', {name: name, pwd: pwd})
       .subscribe(res=>{
-        if (res.status == 200 )
+        if (res.status == 201 )
 	{
 	  this.set(name, res['_body'] as string);
 	  resolve("");
