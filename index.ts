@@ -49,7 +49,7 @@ export class MicroserviceClient extends Service{
 	  })(
 	  {
             "get": function(){
-	      return id ? `${self.buildUrl(get_microservice_name())}/${get_resource_name()}/${id}` : `${self.buildUrl(get_microservice_name())}/${get_resource_name()}${encodeQuerystring(param) == null ? '': encodeQuerystring(param)}`;
+	      return id ? `${self.buildUrl(get_microservice_name())}/${get_resource_name()}/${id}` : `${self.buildUrl(get_microservice_name())}/${get_resource_name()}${encodeQuerystring(param) == null ? '': '?' + encodeQuerystring(param)}`;
 	    },
 	    "post": function(){
               return `${self.buildUrl(get_microservice_name())}/${get_resource_name()}`;
