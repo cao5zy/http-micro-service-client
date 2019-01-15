@@ -6,7 +6,7 @@ import * as _ from 'underscore';
 import { AccountService } from './account';
 import { MICRO_API_CONF } from './micro_api_conf';
 import { MicroserviceAPIConfig } from './microservice_api_config';
-
+import { encodeQuerystring } from './querystring';
 
 export abstract class Service{
     abstract act(microserviceName: string, methodName: string, id: string, param: any): Observable<any>;
@@ -49,7 +49,7 @@ export class MicroserviceClient extends Service{
 	  })(
 	  {
             "get": function(){
-	      return id ? `${self.buildUrl(get_microservice_name())}/${get_resource_name()}/${id}` : `${self.buildUrl(get_microservice_name())}/${get_resource_name()}`;
+	      return id ? `${self.buildUrl(get_microservice_name())}/${get_resource_name()}/${id}` : `${self.buildUrl(get_microservice_name())}/${get_resource_name()}${encodeQuerystring(param) == null ? '': encodeQuerystring(param)}`;
 	    },
 	    "post": function(){
               return `${self.buildUrl(get_microservice_name())}/${get_resource_name()}`;
