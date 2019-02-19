@@ -2,7 +2,7 @@ import * as _ from 'underscore';
 
 export function encodeQuerystring(obj: Object): any {
     let removeEmpty = function(list: any):any{
-        return list == null ? null:  _.filter(list, item=>!_.isEmpty(item[1]));
+        return list == null ? null:  _.filter(list, item=>_.isNumber(item[1]) || !_.isEmpty(item[1]));
     };
 
     let encode = function(list: any): string {
