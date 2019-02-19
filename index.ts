@@ -25,7 +25,7 @@ export class MicroserviceClient extends Service{
     }
     act(microserviceName: string, methodName: string, id: any, param: any): Observable<any>{
 
-        let rest_methods = ["get", "post", "delete", "patch"], self = this;
+        let rest_methods = ["get", "post", "delete", "patch", "put"], self = this;
 
         function is_rest() {
           return !_.isUndefined(_.find(rest_methods, n=>n==methodName.toLowerCase()));
@@ -59,7 +59,10 @@ export class MicroserviceClient extends Service{
             },
 	    "patch": function(){
 	      return `${self.buildUrl(get_microservice_name())}/${get_resource_name()}/${id}`;
-            }
+            },
+	    "put": function(){
+	      return `${self.buildUrl(get_microservice_name())}/${get_resource_name()}/${id}`;
+	    }
           }
 	  );
         }
@@ -96,7 +99,16 @@ export class MicroserviceClient extends Service{
 		       "token": self.account.getToken()
 		     })
 	    });
+	  },
+	  "put": function(){
+	    return self.http.put(build_rest_url(), param, {
+	      "headers": new Headers({
+		       "name": self.account.getName(),
+		       "token": self.account.getToken()
+		     })
+	    });
 	  }
+	  
         };
 
         return is_rest() ? new Observable<any>((observer: Observer<any>)=>{
