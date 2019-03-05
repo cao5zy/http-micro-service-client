@@ -1,6 +1,6 @@
 {
   "name": "http-micro-service-front",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "a thin client to invoke microservice",
   "main": "./index.ts",
   "scripts": {
