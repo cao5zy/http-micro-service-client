@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs/Observable';
 import { Observer } from 'rxjs/Observer';
+import { EventEmitter }  from '@angular/core';
 import { Http, Headers } from '@angular/http';
 import { Injectable, InjectionToken, Inject } from '@angular/core';
 import * as _ from 'underscore';
@@ -10,6 +11,7 @@ import { encodeQuerystring } from './querystring';
 
 export abstract class Service{
     abstract act(microserviceName: string, methodName: string, id: string, param: any): Observable<any>;
+    abstract loading(): EventEmitter<any>;
 }
 
 @Injectable()
@@ -23,6 +25,12 @@ export class MicroserviceClient extends Service{
         return `${apiConfig.baseUrl}/_api/${microserviceName}`;
       };
     }
+    private _loading: EventEmitter<any> = new EventEmitter<any>();
+
+    loading(): EventEmitter<any>{
+      return this._loading;
+    }
+
     act(microserviceName: string, methodName: string, id: any, param: any): Observable<any>{
 
         let rest_methods = ["get", "post", "delete", "patch", "put"], self = this;
@@ -111,10 +119,12 @@ export class MicroserviceClient extends Service{
 	  
         };
 
+        this._loading.next(null);
         return is_rest() ? new Observable<any>((observer: Observer<any>)=>{
 	  rest_actions[methodName.toLowerCase()]().
 	    subscribe(res=>{
               observer.next("_body" in res ? JSON.parse(res["_body"]) : res);
+	      this._loading.complete(null);
 	    });
 	  
 	}) :
@@ -130,6 +140,7 @@ export class MicroserviceClient extends Service{
 		  })
 		}).subscribe((res)=>{
                      observer.next("_body" in res ? JSON.parse(res["_body"]) : res);
+		     this._loading.complete(null);
 	        });
 	});
 
