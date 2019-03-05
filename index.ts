@@ -12,6 +12,7 @@ import { encodeQuerystring } from './querystring';
 export abstract class Service{
     abstract act(microserviceName: string, methodName: string, id: string, param: any): Observable<any>;
     abstract loading(): EventEmitter<any>;
+    abstract loaded(): EventEmitter<any>;
 }
 
 @Injectable()
@@ -26,9 +27,13 @@ export class MicroserviceClient extends Service{
       };
     }
     private _loading: EventEmitter<any> = new EventEmitter<any>();
+    private _loaded: EventEmitter<any> = new EventEmitter<any>();
 
     loading(): EventEmitter<any>{
       return this._loading;
+    }
+    loaded(): EventEmitter<any>{
+      return this._loaded;
     }
 
     act(microserviceName: string, methodName: string, id: any, param: any): Observable<any>{
@@ -119,12 +124,12 @@ export class MicroserviceClient extends Service{
 	  
         };
 
-        this._loading.next(null);
+        this._loading.emit(null);
         return is_rest() ? new Observable<any>((observer: Observer<any>)=>{
 	  rest_actions[methodName.toLowerCase()]().
 	    subscribe(res=>{
               observer.next("_body" in res ? JSON.parse(res["_body"]) : res);
-	      this._loading.complete(null);
+	      this._loaded.emit(null);
 	    });
 	  
 	}) :
@@ -140,7 +145,7 @@ export class MicroserviceClient extends Service{
 		  })
 		}).subscribe((res)=>{
                      observer.next("_body" in res ? JSON.parse(res["_body"]) : res);
-		     this._loading.complete(null);
+		     this._loaded.emit(null);
 	        });
 	});
 
