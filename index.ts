@@ -28,6 +28,7 @@ export class MicroserviceClient extends Service {
     }
     private _loading: EventEmitter<any> = new EventEmitter<any>();
     private _loaded: EventEmitter<any> = new EventEmitter<any>();
+    auth_err: EventEmitter<string> = new EventEmitter<string>();
 
     loading(): EventEmitter<any> {
       return this._loading;
@@ -135,6 +136,16 @@ export class MicroserviceClient extends Service {
 	    subscribe(res => {
               observer.next('_body' in res ? JSON.parse(res['_body']) : res);
 	      this._loaded.emit(null);
+	    },
+	    err => {
+	      if (err.status === 401) {
+	        this.auth_err.emit(err.statusText);
+              }
+	      
+	      console.log(err);
+	    },
+	    () => {
+	      observer.complete();
 	    });
 	  
 	}) :
