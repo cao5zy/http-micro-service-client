@@ -1,6 +1,6 @@
 {
   "name": "http-micro-service-front",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "a thin client to invoke microservice",
   "main": "./index.ts",
   "scripts": {
@@ -19,7 +19,7 @@
   "devDependencies": {
     "typescript": "^2.6.1"
   },
-  "author": "zongying.cao@hpe.com",
+  "author": "zongying_cao@163.com",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/cao5zy/http-micro-service-client/issues"
