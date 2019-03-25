@@ -11,8 +11,39 @@ This is a typescript library for AngularJs2 to invoke REST APIs of microservices
 It assumes that the service url has the following tow patterns:  
 *REST pattern: http://host:port/_api/service_name/resource_name  
 
-## Use it REST pattern
-Let's assume that the `service_name` is `interface_service` and the `resource_name` is `interface`.
+Let's assumes there is a resource `specialists` associated with a RESTful microservice `people_service`. The example below will show how to post, get, put and delete the individual `specialist` data through `http-micro-service-front`.
+
+## Pre-configure your code to use `http-micro-service-front`
+app.module.ts
+```
+...
+import { AccountService, MICRO_API_CONF, MicroserviceClient, Service } from 'http-micro-service-front';
+...
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    ...
+  ],
+  imports: [
+    HttpModule,
+    BrowserModule,
+    ...
+  ],
+  bootstrap: [AppComponent],
+  providers: [{
+    provide: MICRO_API_CONF,
+    useValue: {
+      baseUrl: environment.baseUrl
+    }
+    },
+  {provide: Service, useClass: MicroserviceClient},
+  ...
+  ]
+})
+export class AppModule { }
+```
+Let's assume that the `service_name` is `` and the `resource_name` is `interface`.
 Import the types to your file.
 
     import { useService, Service, AccountService } from 'seneca_client_for_ng2'
