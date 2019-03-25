@@ -13,6 +13,7 @@ export abstract class Service {
     abstract act(microserviceName: string, methodName: string, id: string, param: any): Observable<any>;
     abstract loading(): EventEmitter<any>;
     abstract loaded(): EventEmitter<any>;
+    abstract auth_err(): EventEmitter<{resource: string, action: string}>;
 }
 
 @Injectable()
@@ -28,8 +29,11 @@ export class MicroserviceClient extends Service {
     }
     private _loading: EventEmitter<any> = new EventEmitter<any>();
     private _loaded: EventEmitter<any> = new EventEmitter<any>();
-    auth_err: EventEmitter<string> = new EventEmitter<string>();
+    _auth_err: EventEmitter<{resource: string; action: string}> = new EventEmitter<{resource: string; action: string}>();
 
+    auth_err(): EventEmitter<{resource: string; action: string}> {
+      return this._auth_err;
+    }
     loading(): EventEmitter<any> {
       return this._loading;
     }
@@ -135,16 +139,19 @@ export class MicroserviceClient extends Service {
 	  rest_actions[methodName.toLowerCase()]().
 	    subscribe(res => {
               observer.next('_body' in res ? JSON.parse(res['_body']) : res);
-	      this._loaded.emit(null);
+              this._loaded.emit(null);
+	      observer.complete();
 	    },
 	    err => {
 	      if (err.status === 401) {
-	        this.auth_err.emit(err.statusText);
+	        this._auth_err.emit({resource: get_resource_name(), action: methodName.toLowerCase()});
               }
-	      
+              this._loaded.emit(null);
+	      observer.complete();
 	      console.log(err);
 	    },
 	    () => {
+    	      this._loaded.emit(null);
 	      observer.complete();
 	    });
 	  
