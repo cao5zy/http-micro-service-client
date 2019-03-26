@@ -8,10 +8,10 @@ This is a typescript library for AngularJs2 to invoke REST APIs of microservices
 
 ## Precondition
 
-It assumes that the service url has the following tow patterns:  
+It assumes that the service url has the following pattern:  
 *REST pattern: http://host:port/_api/service_name/resource_name  
 
-Let's assumes there is a resource `specialists` associated with a RESTful microservice `people_service`. The example below will show how to post, get, put and delete the individual `specialist` data through `http-micro-service-front`.
+Let's assume that there is a resource `specialists` associated with a RESTful microservice `people_service`. The example below will show how to post, get, put and delete the individual `specialist` data through `http-micro-service-front` as well as other interactions.
 
 ## Pre-configure your code to use `http-micro-service-front`
 app.module.ts
@@ -35,72 +35,110 @@ import { AccountService, MICRO_API_CONF, MicroserviceClient, Service } from 'htt
     provide: MICRO_API_CONF,
     useValue: {
       baseUrl: environment.baseUrl
-    }
+      }
     },
-  {provide: Service, useClass: MicroserviceClient},
+    {provide: Service, useClass: MicroserviceClient},
   ...
   ]
 })
 export class AppModule { }
 ```
-Let's assume that the `service_name` is `` and the `resource_name` is `interface`.
-Import the types to your file.
+environment.ts
+```
+export const environment = {
+  production: false,
+  baseUrl: "http://127.0.0.1:9008"
+};
+```
+The `Service` is setup as the root module not only because it can be used over the components but also because it is designed as an layer under the components for transport and has following APIs to interact.
+- get
+- post
+- put
+- delete
+- loading
+- loaded
+- auth_err
 
-    import { useService, Service, AccountService } from 'seneca_client_for_ng2'
-   
-Initialize the service object.
+## Get/Post/Put/Delete
+```
+import { useService, Service } from 'http-micro-service-front';
+import { Specialist } from './../models';
 
-    private senecaClient : any = null;  
-    constructor(private service: Service
-    ){
-        this.senecaClient = useService(this.service, "interface_service");
-    }
+@Component({
+  selector: 'app-access',
+  templateUrl: './access.component.html',
+  styleUrls: ['./access.component.css']
+})
+export class SpecialistComponent implements OnInit {
+  _specialistService : any = null;
+  ...
+  
+  constructor(private _service: Service) {
+    this._specialistService = useService(this._service, 'people_service:specialist');
+  }
 
-Post data to service. 
+  get_specialist(id: string): Observable<Specialist> {
+    return this._specialistService('get')({id: id})
+  }
 
-    private loadData(){
-        let param = {};
-        this.senecaClient("post")({param: this.appModuleview}));
-	    .subscribe(res=>{
-            console.log(res);
-	    // your code for handling data is here.
-        });
-    }
+  post_specialist(specialist: Specialist) : void {
+    this._specialistService('post')(specialist);
+  }
 
-That's all for use the code. In the code above, you are responsible to take care of four things:
-1. *this.service*
-2. *name_of_your_service*
-3. *methodname*
-4. *param*
+  put_specialist(specialist: Specialist) : void {
+    this._specialistService('put')({id: specialist.id, param: specialist})
+    .subscribe(res => {});
+  }
 
-I will explain them one by one.
+  delete_specialist(id: string) : void {
+    this._specialistService('delete')({id: id})
+    .subscribe(res => {});
+  }  
 
-### this.service  
+```
 
-"this.service" is an injectable AngularJs2 service object. It is initialized by *MicroserviceClient* class.  
+## Query with Get
+It is possible that complex query is required. 
+```
+this._speicalistsService('get')({name: 'alan', 'addr': 'addr1'})
+.subscribe(res => {
 
-    import { Service, MicroserviceClient } from 'seneca_client_for_ng2';
-    ...
-    providers: [{provide: Service, useClass: MicroserviceClient}]
+  });
+```
+The parameters above will be converted to querystring as `?name=alan&addr=addr1`.
 
-In this way, you can easily mock the *Service* in your unit test.  
-To initialize *MicroserviceClient* object, you have to specify an InjectionToken.  
+## Interactions with loading/loaded
+Because the `Service` object has been injected at the root, it can be used anywhere in the component.
+So we can easily take advantages of the api `loading` and `loaded` to show and close the loading layer.
+```
+ngOnInit() {
+  this._service.loading()
+  .subscribe(res => {
+    // show your loading layer
+    });
 
-    import { MICRO_API_CONF, Service, MicroserviceClient } from 'seneca_client_for_ng2';
-    ...
-    providers: [
-        {provide: MICRO_API_CONF, useValue: { baseurl: "http://host:port" }}, 
-	    {provide: Service, useClass: MicroserviceClient }
-	]
+  this._service.loaded()
+  .subscribe(res => {
+    // hide your loading layer
+    });
+}
 
-### name_of_your_service
+```
 
-The pre-condition of this library is assuming that your microservice instances is deployed behind a proxy. Each microservice instance has its own unique name in the url.  
-For example, name_of_your_service is interface_service. Then the generated url is as following.
+## Interactions with auth_err
+We can handle the authorization error globally in architecture level without impact the business code with the api `auth_err`.
+```
+ngOnInit() {
+  this._service.auth_err()
+  .subscribe( res => {
+    this._alerts.push(res);
+    });
+}
 
-    http://baseUrl/_api/interface_service/act
+```
 
-
+This library is designed as part of microservices platform solution. It aims to combine the front end application with the backend microservices seamlessly. Any comments and [issues](https://github.com/cao5zy/http-micro-service-client/issues) are welcomed.
+Please feel free to contact me at <zongying_cao@163.com>.
 
 
 
